@@ -7,10 +7,10 @@ import {
   IonFabButton,
   IonFab,
   IonIcon,
-  IonRow, IonGrid, IonImg, IonCol
+  IonRow, IonGrid, IonImg, IonCol, ActionSheetController
 } from '@ionic/angular/standalone';
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
-import {PhotoService} from "../services/photo.service";
+import {PhotoService, UserPhoto} from "../services/photo.service";
 
 @Component({
   selector: 'app-tab2',
@@ -19,15 +19,38 @@ import {PhotoService} from "../services/photo.service";
   imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonFabButton, IonFab, IonIcon, IonRow, IonGrid, IonImg, IonCol]
 })
 export class Tab2Page {
+  actionSheetController = inject(ActionSheetController);
+  photoService = inject(PhotoService)
 
   constructor() {
     effect(async () => {
       await this.photoService.loadSaved()
     })
   }
-  photoService = inject(PhotoService)
 
   addPhotoToGallery() {
     this.photoService.addNewToGallery()
+  }
+
+  public async showActionSheet(photo: UserPhoto, position: number) {
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Photos',
+      buttons: [{
+        text: 'Delete',
+        role: 'destructive',
+        icon: 'trash',
+        handler: () => {
+          this.photoService.deletePicture(photo, position);
+        }
+      }, {
+        text: 'Cancel',
+        icon: 'close',
+        role: 'cancel',
+        handler: () => {
+          // Nothing to do, action sheet is automatically closed
+        }
+      }]
+    });
+    await actionSheet.present();
   }
 }

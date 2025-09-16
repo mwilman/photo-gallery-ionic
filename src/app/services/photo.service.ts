@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {Camera, CameraResultType, CameraSource, Photo} from "@capacitor/camera";
 import {Directory, Filesystem} from "@capacitor/filesystem";
 import {Preferences} from "@capacitor/preferences";
@@ -13,7 +13,9 @@ export class PhotoService {
   private PHOTO_STORAGE: string = 'photos';
   private platform: Platform;
 
-  constructor(platform: Platform) {
+  constructor() {
+    const platform = inject(Platform);
+
     this.platform = platform;
   }
 
@@ -115,6 +117,26 @@ export class PhotoService {
     };
     reader.readAsDataURL(blob);
   });
+
+  public async deletePicture(photo: UserPhoto, position: number) {
+    // Remove this photo from the Photos reference data array
+    this.photos.splice(position, 1);
+
+    // Update photos array cache by overwriting the existing photo array
+    Preferences.set({
+      key: this.PHOTO_STORAGE,
+      value: JSON.stringify(this.photos)
+    });
+
+    // delete photo file from filesystem
+    const filename = photo.filepath
+      .substring(photo.filepath.lastIndexOf('/') + 1);
+
+    await Filesystem.deleteFile({
+      path: filename,
+      directory: Directory.Data
+    });
+  }
 }
 
 export interface UserPhoto {

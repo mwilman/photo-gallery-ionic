@@ -23,9 +23,9 @@
 <ion-content>
   <ion-grid>
     <ion-row>
-      @for (photo of photoService.photos; track photo) {
+      @for (photo of photoService.photos; track photo; let position = $index) {
         <ion-col size="6">
-          <ion-img [src]="photo.webviewPath" />
+          <ion-img (click)="showActionSheet(photo, position)" [src]="photo.webviewPath" />
         </ion-col>
       }
     </ion-row>

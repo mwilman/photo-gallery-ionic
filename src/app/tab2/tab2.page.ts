@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, effect, inject} from '@angular/core';
 import {
   IonHeader,
   IonToolbar,
@@ -20,7 +20,11 @@ import {PhotoService} from "../services/photo.service";
 })
 export class Tab2Page {
 
-  constructor() {}
+  constructor() {
+    effect(async () => {
+      await this.photoService.loadSaved()
+    })
+  }
   photoService = inject(PhotoService)
 
   addPhotoToGallery() {

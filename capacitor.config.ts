@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'photo-gallery',
+  appId: 'de.mwilman.photoGallery',
+  appName: 'Photo Gallery',
   webDir: 'www',
   plugins: {
     LiveUpdates: {
